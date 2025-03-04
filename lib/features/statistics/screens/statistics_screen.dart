@@ -16,6 +16,7 @@ class StatisticsScreen extends StatefulWidget {
 
 class _StatisticsScreenState extends State<StatisticsScreen> {
   int currentTaskCount = 0;
+  int currentCompletedTasksCount = 0;
 
   void loadItemCount() async {
     int taskCount = await widget.repository.itemCount;
@@ -27,9 +28,20 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     }
   }
 
+  void loadCompletedTasksCount() async {
+    int completedTasksCount = await widget.repository.completedTasksCount;
+
+    if (completedTasksCount != currentCompletedTasksCount) {
+      setState(() {
+        currentCompletedTasksCount = completedTasksCount;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     loadItemCount();
+    loadCompletedTasksCount();
 
     return Scaffold(
       appBar: AppBar(
@@ -39,7 +51,17 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         child: Column(
           children: [
             const SizedBox(height: 60),
-            TaskCounterCard(taskCount: currentTaskCount),
+            TaskCounterCard(
+              taskCount: currentTaskCount,
+              infoText: "Anzahl der offenen Tasks",
+              shapeColor: Colors.purple,
+            ),
+            if (currentCompletedTasksCount > 0)
+              TaskCounterCard(
+                taskCount: currentCompletedTasksCount,
+                infoText: "Abgeschlossene Tasks",
+                shapeColor: Colors.green,
+              ),
           ],
         ),
       ),

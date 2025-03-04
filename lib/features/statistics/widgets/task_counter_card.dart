@@ -2,8 +2,15 @@ import 'package:flutter/material.dart';
 
 class TaskCounterCard extends StatelessWidget {
   final int taskCount;
+  final String infoText;
+  final Color shapeColor;
 
-  const TaskCounterCard({super.key, required this.taskCount});
+  const TaskCounterCard({
+    super.key,
+    required this.taskCount,
+    required this.infoText,
+    required this.shapeColor,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,8 +29,8 @@ class TaskCounterCard extends StatelessWidget {
             children: [
               Container(
                 padding: const EdgeInsets.all(16.0),
-                decoration: const BoxDecoration(
-                  color: Colors.purple,
+                decoration: BoxDecoration(
+                  color: shapeColor,
                   shape: BoxShape.circle,
                 ),
                 child: Text(
@@ -36,10 +43,10 @@ class TaskCounterCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 16),
-              const Expanded(
+              Expanded(
                 child: Text(
-                  "Anzahl der offenen Tasks",
-                  style: TextStyle(
+                  infoText,
+                  style: const TextStyle(
                     fontSize: 18,
                   ),
                 ),

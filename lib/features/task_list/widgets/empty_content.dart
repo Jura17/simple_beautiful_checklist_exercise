@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:simple_beautiful_checklist_exercise/shared/database_repository.dart';
 
 class EmptyContent extends StatelessWidget {
-  const EmptyContent({super.key});
+  const EmptyContent({
+    super.key,
+    required this.repository,
+  });
+
+  final DatabaseRepository repository;
 
   @override
   Widget build(BuildContext context) {

@@ -18,56 +18,69 @@ class ItemList extends StatelessWidget {
     return ListView.separated(
       itemCount: items.length,
       itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(items[index]),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.edit),
-                onPressed: () {
-                  TextEditingController editController =
-                      TextEditingController(text: items[index]);
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: const Text('Task bearbeiten'),
-                        content: TextField(
-                          autofocus: true,
-                          controller: editController,
-                          decoration: const InputDecoration(
-                              hintText: "Task bearbeiten"),
-                        ),
-                        actions: [
-                          TextButton(
-                            child: const Text('Abbrechen'),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
+        final item = items[index];
+        return Dismissible(
+          key: Key(item),
+          background: Container(
+            color: Colors.red,
+            child: const Icon(Icons.delete),
+          ),
+          onDismissed: (direction) async {
+            await repository.deleteItem(index);
+            updateOnChange();
+          },
+          child: ListTile(
+            title: Text(items[index]),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.edit),
+                  onPressed: () {
+                    TextEditingController editController =
+                        TextEditingController(text: items[index]);
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text('Task bearbeiten'),
+                          content: TextField(
+                            autofocus: true,
+                            controller: editController,
+                            decoration: const InputDecoration(
+                                hintText: "Task bearbeiten"),
                           ),
-                          TextButton(
-                            child: const Text('Speichern'),
-                            onPressed: () {
-                              repository.editItem(index, editController.text);
-                              updateOnChange();
-                              Navigator.of(context).pop();
-                            },
-                          )
-                        ],
-                      );
-                    },
-                  );
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.delete),
-                onPressed: () {
-                  repository.deleteItem(index);
-                  updateOnChange();
-                },
-              ),
-            ],
+                          actions: [
+                            TextButton(
+                              child: const Text('Abbrechen'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                            TextButton(
+                              child: const Text('Speichern'),
+                              onPressed: () async {
+                                await repository.editItem(
+                                    index, editController.text);
+                                updateOnChange();
+                                Navigator.of(context).pop();
+                              },
+                            )
+                          ],
+                        );
+                      },
+                    );
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete),
+                  onPressed: () async {
+                    await repository.deleteItem(index);
+                    updateOnChange();
+                  },
+                ),
+              ],
+            ),
           ),
         );
       },
