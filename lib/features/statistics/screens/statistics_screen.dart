@@ -1,47 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:simple_beautiful_checklist_exercise/features/statistics/widgets/task_counter_card.dart';
-import 'package:simple_beautiful_checklist_exercise/shared/database_repository.dart';
+import 'package:simple_beautiful_checklist_exercise/shared/task_provider.dart';
 
 class StatisticsScreen extends StatefulWidget {
   const StatisticsScreen({
     super.key,
-    required this.repository,
   });
-
-  final DatabaseRepository repository;
 
   @override
   State<StatisticsScreen> createState() => _StatisticsScreenState();
 }
 
 class _StatisticsScreenState extends State<StatisticsScreen> {
-  int currentTaskCount = 0;
-  int currentCompletedTasksCount = 0;
-
-  void loadItemCount() async {
-    int taskCount = await widget.repository.itemCount;
-
-    if (taskCount != currentTaskCount) {
-      setState(() {
-        currentTaskCount = taskCount;
-      });
-    }
-  }
-
-  void loadCompletedTasksCount() async {
-    int completedTasksCount = await widget.repository.completedTasksCount;
-
-    if (completedTasksCount != currentCompletedTasksCount) {
-      setState(() {
-        currentCompletedTasksCount = completedTasksCount;
-      });
-    }
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<TaskProvider>().loadCompletedTasksCount();
+      context.read<TaskProvider>().loadItemCount();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    loadItemCount();
-    loadCompletedTasksCount();
+    final taskProvider = context.read<TaskProvider>();
+
+    int currentTaskCount = taskProvider.currentTaskCount;
+    int completedTasksCount = taskProvider.completedTasksCount;
 
     return Scaffold(
       appBar: AppBar(
@@ -56,9 +42,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               infoText: "Anzahl der offenen Tasks",
               shapeColor: Colors.purple,
             ),
-            if (currentCompletedTasksCount > 0)
+            if (completedTasksCount > 0)
               TaskCounterCard(
-                taskCount: currentCompletedTasksCount,
+                taskCount: completedTasksCount,
                 infoText: "Abgeschlossene Tasks",
                 shapeColor: Colors.green,
               ),

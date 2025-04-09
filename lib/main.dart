@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:simple_beautiful_checklist_exercise/shared/database_repository.dart';
+import 'package:provider/provider.dart';
 
 import 'package:simple_beautiful_checklist_exercise/shared/shared_preferences_repository.dart';
+import 'package:simple_beautiful_checklist_exercise/shared/task_provider.dart';
 
 import 'features/splash/splash_screen.dart';
 import 'home_screen.dart';
@@ -13,16 +14,13 @@ void main() async {
 
   final SharedPreferencesRepository repository = SharedPreferencesRepository();
 
-  runApp(MainApp(repository: repository));
+  runApp(ChangeNotifierProvider(create: (context) => TaskProvider(), child: MainApp()));
 }
 
 class MainApp extends StatelessWidget {
   const MainApp({
     super.key,
-    required this.repository,
   });
-
-  final DatabaseRepository repository;
 
   @override
   Widget build(BuildContext context) {
@@ -43,9 +41,7 @@ class MainApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const SplashScreen(),
-        '/home': (context) => HomeScreen(
-              repository: repository,
-            ),
+        '/home': (context) => HomeScreen(),
       },
     );
   }

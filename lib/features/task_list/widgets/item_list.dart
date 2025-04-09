@@ -1,24 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:simple_beautiful_checklist_exercise/shared/database_repository.dart';
+import 'package:provider/provider.dart';
+
+import 'package:simple_beautiful_checklist_exercise/shared/task_provider.dart';
 
 class ItemList extends StatelessWidget {
   const ItemList({
     super.key,
-    required this.repository,
-    required this.items,
-    required this.updateOnChange,
   });
-
-  final DatabaseRepository repository;
-  final List<String> items;
-  final void Function() updateOnChange;
 
   @override
   Widget build(BuildContext context) {
+    final taskProvider = context.watch<TaskProvider>();
+
     return ListView.separated(
-      itemCount: items.length,
+      itemCount: taskProvider.items.length,
       itemBuilder: (context, index) {
-        final item = items[index];
+        final item = taskProvider.items[index];
         return Dismissible(
           key: Key(item),
           background: Container(
@@ -26,19 +23,18 @@ class ItemList extends StatelessWidget {
             child: const Icon(Icons.delete),
           ),
           onDismissed: (direction) async {
-            await repository.deleteItem(index);
-            updateOnChange();
+            taskProvider.deleteItem(index);
+            taskProvider.loadItems();
           },
           child: ListTile(
-            title: Text(items[index]),
+            title: Text(taskProvider.items[index]),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(
                   icon: const Icon(Icons.edit),
                   onPressed: () {
-                    TextEditingController editController =
-                        TextEditingController(text: items[index]);
+                    TextEditingController editController = TextEditingController(text: taskProvider.items[index]);
                     showDialog(
                       context: context,
                       builder: (context) {
@@ -47,8 +43,7 @@ class ItemList extends StatelessWidget {
                           content: TextField(
                             autofocus: true,
                             controller: editController,
-                            decoration: const InputDecoration(
-                                hintText: "Task bearbeiten"),
+                            decoration: const InputDecoration(hintText: "Task bearbeiten"),
                           ),
                           actions: [
                             TextButton(
@@ -60,9 +55,9 @@ class ItemList extends StatelessWidget {
                             TextButton(
                               child: const Text('Speichern'),
                               onPressed: () async {
-                                await repository.editItem(
-                                    index, editController.text);
-                                updateOnChange();
+                                await taskProvider.editItem(index, editController.text);
+                                taskProvider.loadItems();
+
                                 Navigator.of(context).pop();
                               },
                             )
@@ -75,8 +70,8 @@ class ItemList extends StatelessWidget {
                 IconButton(
                   icon: const Icon(Icons.delete),
                   onPressed: () async {
-                    await repository.deleteItem(index);
-                    updateOnChange();
+                    await taskProvider.deleteItem(index);
+                    taskProvider.loadItems();
                   },
                 ),
               ],

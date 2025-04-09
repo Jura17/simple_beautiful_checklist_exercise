@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:simple_beautiful_checklist_exercise/features/statistics/screens/statistics_screen.dart';
 import 'package:simple_beautiful_checklist_exercise/shared/database_repository.dart';
+import 'package:simple_beautiful_checklist_exercise/shared/task_provider.dart';
 
 import 'features/task_list/screens/list_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key, required this.repository});
-
-  final DatabaseRepository repository;
+  const HomeScreen({
+    super.key,
+  });
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -21,8 +23,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _navBarWidgets = [
-      ListScreen(repository: widget.repository),
-      StatisticsScreen(repository: widget.repository),
+      ListScreen(),
+      StatisticsScreen(),
     ];
   }
 
