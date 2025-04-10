@@ -6,7 +6,8 @@ class TaskProvider extends ChangeNotifier {
   final DatabaseRepository taskRepo = SharedPreferencesRepository();
   List<String> _items = [];
   bool isLoading = false;
-  int _currentTaskCount = 0;
+
+  int _currentTasksCount = 0;
   int _completedTasksCount = 0;
 
   List<String> get items => _items;
@@ -14,11 +15,13 @@ class TaskProvider extends ChangeNotifier {
   Future<void> loadItems() async {
     isLoading = true;
     notifyListeners();
-    // Future.delayed(Duration(seconds: 2), () async {
+    // await Future.delayed(const Duration(seconds: 2));
     _items = await taskRepo.getItems();
+    _currentTasksCount = _items.length;
+    _completedTasksCount = await taskRepo.completedTasksCount;
+
     isLoading = false;
     notifyListeners();
-    // });
   }
 
   Future<void> addItem(String item) async {
@@ -33,18 +36,6 @@ class TaskProvider extends ChangeNotifier {
     await taskRepo.editItem(index, newItem);
   }
 
-  Future<void> loadCompletedTasksCount() async {
-    _completedTasksCount = await taskRepo.completedTasksCount;
-  }
-
   int get completedTasksCount => _completedTasksCount;
-
-  void loadItemCount() async {
-    if (_currentTaskCount != items.length) {
-      _currentTaskCount = items.length;
-      notifyListeners();
-    }
-  }
-
-  int get currentTaskCount => _currentTaskCount;
+  int get currentTaskCount => _currentTasksCount;
 }

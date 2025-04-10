@@ -13,21 +13,15 @@ class StatisticsScreen extends StatefulWidget {
 }
 
 class _StatisticsScreenState extends State<StatisticsScreen> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<TaskProvider>().loadCompletedTasksCount();
-      context.read<TaskProvider>().loadItemCount();
-    });
-  }
+  int currentTasksCount = 0;
+  int completedTasksCount = 0;
 
   @override
   Widget build(BuildContext context) {
     final taskProvider = context.read<TaskProvider>();
 
-    int currentTaskCount = taskProvider.currentTaskCount;
-    int completedTasksCount = taskProvider.completedTasksCount;
+    currentTasksCount = taskProvider.currentTaskCount;
+    completedTasksCount = taskProvider.completedTasksCount;
 
     return Scaffold(
       appBar: AppBar(
@@ -38,7 +32,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           children: [
             const SizedBox(height: 60),
             TaskCounterCard(
-              taskCount: currentTaskCount,
+              taskCount: currentTasksCount,
               infoText: "Anzahl der offenen Tasks",
               shapeColor: Colors.purple,
             ),

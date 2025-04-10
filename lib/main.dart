@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-import 'package:simple_beautiful_checklist_exercise/shared/shared_preferences_repository.dart';
 import 'package:simple_beautiful_checklist_exercise/shared/task_provider.dart';
 
 import 'features/splash/splash_screen.dart';
@@ -12,9 +11,10 @@ void main() async {
   // Wird benötigt, um auf SharedPreferences zuzugreifen
   WidgetsFlutterBinding.ensureInitialized();
 
-  final SharedPreferencesRepository repository = SharedPreferencesRepository();
-
-  runApp(ChangeNotifierProvider(create: (context) => TaskProvider(), child: MainApp()));
+  runApp(ChangeNotifierProvider(
+    create: (context) => TaskProvider(),
+    child: const MainApp(),
+  ));
 }
 
 class MainApp extends StatelessWidget {
@@ -41,7 +41,7 @@ class MainApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const SplashScreen(),
-        '/home': (context) => HomeScreen(),
+        '/home': (context) => const HomeScreen(),
       },
     );
   }
